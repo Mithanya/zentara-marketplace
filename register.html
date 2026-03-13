@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register – Zentara</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+<nav class="navbar">
+  <div class="container"><a class="navbar-brand" href="/">Zen<span>tara</span></a></div>
+</nav>
+
+<div class="container">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in messages %}
+      <div class="alert alert-{{ cat }} mt-3">{{ msg }}</div>
+    {% endfor %}
+  {% endwith %}
+
+  <div class="auth-card">
+    <h2 class="mb-1"><i class="bi bi-person-plus"></i> Create Account</h2>
+    <p style="color:var(--muted);font-size:.88rem;" class="mb-4">Join Zentara and start shopping</p>
+    <form method="POST" action="/register">
+      <div class="mb-3">
+        <label class="form-label">Full name</label>
+        <input type="text" name="name" class="form-control" placeholder="Jane Doe" required />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Email address</label>
+        <input type="email" name="email" class="form-control" placeholder="you@example.com" required />
+      </div>
+      <div class="mb-4">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" class="form-control" placeholder="Minimum 6 characters" minlength="6" required />
+      </div>
+      <button type="submit" class="btn-primary-gold">Create Account <i class="bi bi-arrow-right"></i></button>
+    </form>
+    <hr class="divider" />
+    <p style="color:var(--muted);font-size:.88rem;text-align:center;">
+      Already have an account? <a href="/login">Sign in</a>
+    </p>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

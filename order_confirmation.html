@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order Confirmed – Zentara</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <style>
+    @keyframes pop { 0%{transform:scale(0)}70%{transform:scale(1.15)}100%{transform:scale(1)} }
+    .confirm-icon { animation: pop .6s ease forwards; display:block; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)} }
+    .fade-up { animation: fadeUp .5s ease .3s both; }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="container"><a class="navbar-brand" href="/">Zen<span>tara</span></a></div>
+</nav>
+
+<div class="container">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in messages %}
+      <div class="alert alert-{{ cat }} mt-3">{{ msg }}</div>
+    {% endfor %}
+  {% endwith %}
+
+  <div class="confirm-box">
+    <span class="confirm-icon">✅</span>
+    <h2 class="fade-up mt-3">Order Confirmed!</h2>
+    <p class="fade-up" style="color:var(--muted);margin-top:.5rem;font-size:1.05rem;">
+      Thank you for your purchase. Your order is being processed.
+    </p>
+    <div class="fade-up" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem 2rem;display:inline-block;margin-top:2rem;text-align:left;">
+      <div style="color:var(--muted);font-size:.82rem;text-transform:uppercase;letter-spacing:.6px;">What's next</div>
+      <div class="mt-2" style="font-size:.92rem;">
+        <p><i class="bi bi-envelope-check text-gold"></i> &nbsp;Confirmation email sent</p>
+        <p><i class="bi bi-truck text-gold"></i> &nbsp;Estimated delivery: 3–5 business days</p>
+        <p><i class="bi bi-headset text-gold"></i> &nbsp;Support: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="582b2d2828372a2c18223d362c392a39763b3735">[email&#160;protected]</a></p>
+      </div>
+    </div>
+    <div class="mt-4 fade-up">
+      <a href="/" class="btn-cart" style="display:inline-block;width:auto;padding:.65rem 2rem;margin-right:.5rem;">
+        <i class="bi bi-bag"></i> Continue Shopping
+      </a>
+    </div>
+  </div>
+</div>
+
+<footer class="footer"><div class="container"><strong>Zentara</strong> · Smart Online Marketplace</div></foo
