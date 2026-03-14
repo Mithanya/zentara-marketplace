@@ -1,76 +1,104 @@
-# Zentara – Smart Online Marketplace
+# Zentara – Online Marketplace Web Application
 
-Zentara is an Amazon-inspired e-commerce web application built using Python Flask.  
-The project demonstrates full-stack development concepts including authentication, product management, and cart functionality.
+Zentara is an Amazon-inspired e-commerce web application developed using Python and Flask.  
+The project demonstrates fundamental full-stack development concepts including user authentication, product management, and shopping cart functionality.
 
----
-
-## 🚀 Features
-
-- User Registration & Login
-- Product Listings with Images
-- Add to Cart System
-- Checkout Flow
-- Admin Panel for Managing Products
-- Responsive and Clean UI
+The goal of this project is to simulate the core features of an online marketplace while applying backend development, database integration, and frontend interface design.
 
 ---
 
-## 🛠 Tech Stack
+## Project Features
 
-Backend
-- Python
-- Flask
-
-Frontend
-- HTML
-- CSS
-
-Database
-- SQLite
+- User registration and authentication system
+- Product catalog with product listing pages
+- Add-to-cart functionality
+- Basic checkout workflow
+- Admin interface for product management
+- Structured and responsive user interface
 
 ---
 
-## 📂 Project Structure
+## Technology Stack
 
+Backend  
+Python  
+Flask  
+
+Frontend  
+HTML  
+CSS  
+
+Database  
+SQLite  
+
+---
+
+## Project Structure
+
+```
 zentara-marketplace
 │
-app.py  
-requirements.txt  
-database.db  
-
-templates/  
-static/
+├── app.py
+├── requirements.txt
+├── database.db
+│
+├── templates/
+└── static/
+```
 
 ---
 
-## ▶ Run the Project
+## Installation and Setup
 
-1. Clone the repository
+### 1. Clone the repository
 
+```
 git clone https://github.com/Mithanya/zentara-marketplace.git
+cd zentara-marketplace
+```
 
-2. Install dependencies
+### 2. Install required dependencies
 
+```
 pip install -r requirements.txt
+```
 
-3. Run the application
+### 3. Run the application
 
+```
 python app.py
+```
 
-4. Open browser
+### 4. Access the application
 
+Open a browser and navigate to:
+
+```
 http://127.0.0.1:5000
+```
 
 ---
 
-## 🎥 Demo
+## Demonstration
 
-A demo video of the project is included in this repository.
+A demonstration video of the application is included in this repository to showcase the user interface and key features.
 
 ---
 
-## 👨‍💻 Author
+## Learning Outcomes
+
+This project helped demonstrate:
+
+- Building web applications using Flask
+- Integrating backend logic with frontend templates
+- Implementing user authentication workflows
+- Managing application data using SQLite
+- Structuring a basic e-commerce application
+
+---
+
+## Author
 
 Mithanya Murugesan  
-Aspiring Software Developer | Python | Full Stack Development
+Engineering Student  
+Python and Full Stack Development
