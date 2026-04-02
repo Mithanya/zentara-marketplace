@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout – Zentara</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+<nav class="navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">Zen<span>tara</span></a>
+    <a href="/cart" style="color:var(--muted);font-size:.88rem;"><i class="bi bi-arrow-left"></i> Back to Cart</a>
+  </div>
+</nav>
+
+<div class="container py-5">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in messages %}
+      <div class="alert alert-{{ cat }}">{{ msg }}</div>
+    {% endfor %}
+  {% endwith %}
+
+  <h2 class="section-heading mb-1"><i class="bi bi-credit-card text-gold"></i> Checkout</h2>
+  <p class="section-sub">Complete your purchase securely</p>
+
+  <div class="row g-4">
+    <!-- Shipping & Payment Form -->
+    <div class="col-lg-7">
+      <div class="checkout-card mb-4">
+        <h5 style="font-family:'Playfair Display',serif;color:var(--gold);margin-bottom:1.2rem;"><i class="bi bi-geo-alt"></i> Shipping Information</h5>
+        <div class="row g-3">
+          <div class="col-6">
+            <label class="form-label">First Name</label>
+            <input type="text" class="form-control" placeholder="Jane" />
+          </div>
+          <div class="col-6">
+            <label class="form-label">Last Name</label>
+            <input type="text" class="form-control" placeholder="Doe" />
+          </div>
+          <div class="col-12">
+            <label class="form-label">Address</label>
+            <input type="text" class="form-control" placeholder="123 Main Street" />
+          </div>
+          <div class="col-6">
+            <label class="form-label">City</label>
+            <input type="text" class="form-control" placeholder="New York" />
+          </div>
+          <div class="col-3">
+            <label class="form-label">State</label>
+            <input type="text" class="form-control" placeholder="NY" />
+          </div>
+          <div class="col-3">
+            <label class="form-label">ZIP</label>
+            <input type="text" class="form-control" placeholder="10001" />
+          </div>
+        </div>
+      </div>
+
+      <div class="checkout-card">
+        <h5 style="font-family:'Playfair Display',serif;color:var(--gold);margin-bottom:.5rem;"><i class="bi bi-credit-card-2-front"></i> Payment</h5>
+        <p style="color:var(--muted);font-size:.8rem;margin-bottom:1.2rem;">
+          <i class="bi bi-info-circle"></i> Test mode – use card <strong style="color:var(--gold-soft)">4242 4242 4242 4242</strong>, any future date, any CVC.
+        </p>
+
+        <!-- Card UI (visual only in demo; real Stripe Elements needs JS SDK) -->
+        <div class="mb-3">
+          <label class="form-label">Card Number</label>
+          <input type="text" class="form-control" placeholder="4242 4242 4242 4242" maxlength="19" id="cardNum"
+                 oninput="this.value=this.value.replace(/\D/g,'').replace(/(.{4})/g,'$1 ').trim()" />
+        </div>
+        <div class="row g-3">
+          <div class="col-6">
+            <label class="form-label">Expiry</label>
+            <input type="text" class="form-control" placeholder="MM / YY" maxlength="7"
+                   oninput="let v=this.value.replace(/\D/g,'');this.value=v.length>=3?v.slice(0,2)+' / '+v.slice(2):v" />
+          </div>
+          <div class="col-6">
+            <label class="form-label">CVC</label>
+            <input type="text" class="form-control" placeholder="123" maxlength="4"
+                   oninput="this.value=this.value.replace(/\D/g,'')" />
+          </div>
+        </div>
+
+        <form method="POST" action="/checkout" class="mt-4">
+          <button type="submit" class="btn-primary-gold" style="font-size:1rem;padding:.75rem;">
+            <i class="bi bi-lock-fill"></i> Pay ${{ "%.2f"|format(total) }} Now
+          </button>
+        </form>
+        <p style="color:var(--muted);font-size:.75rem;text-align:center;margin-top:.75rem;">
+          <i class="bi bi-shield-lock"></i> 256-bit SSL encryption · Powered by Stripe
+        </p>
+      </div>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="col-lg-5">
+      <div class="total-box">
+        <h5 style="font-family:'Playfair Display',serif;color:var(--gold);margin-bottom:1.2rem;">Order Summary</h5>
+        {% for item in items %}
+        <div class="d-flex gap-3 mb-3 align-items-start">
+          <img src="{{ item.product.image_url }}" style="width:48px;height:48px;object-fit:cover;border-radius:8px;" alt="" onerror="this.src='https://via.placeholder.com/48x48/17171b/c9a84c?text=Z'" />
+          <div style="flex:1">
+            <div style="font-size:.88rem;font-weight:600;">{{ item.product.name }}</div>
+            <div style="font-size:.78rem;color:var(--muted);">Qty: {{ item.qty }}</div>
+          </div>
+          <div style="font-size:.9rem;font-weight:700;color:var(--gold);">${{ "%.2f"|format(item.subtotal) }}</div>
+        </div>
+        {% endfor %}
+        <hr class="divider" />
+        <div class="d-flex justify-content-between mb-2" style="font-size:.88rem;color:var(--muted);">
+          <span>Subtotal</span><span>${{ "%.2f"|format(total) }}</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2" style="font-size:.88rem;color:var(--muted);">
+          <span>Shipping</span><span style="color:var(--success)">Free</span>
+        </div>
+        <hr class="divider" />
+        <div class="d-flex justify-content-between">
+          <span style="font-weight:700;">Total</span>
+          <span style="font-size:1.4rem;font-weight:700;color:var(--gold)">${{ "%.2f"|format(total) }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer"><div class="container"><strong>Zentara</strong> · Smart Online Marketplace</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
