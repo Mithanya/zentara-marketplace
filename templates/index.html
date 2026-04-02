@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Zentara – Shop Online</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="topbar">
+  🚚 Free delivery on orders over $35 &nbsp;·&nbsp; <a href="#">Join Zentara Prime</a> &nbsp;·&nbsp; <a href="#">Track your orders</a>
+</div>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <a class="brand" href="/">Zen<span>tara</span></a>
+  <form class="search-bar" action="/" method="get">
+    <select class="search-cat" name="cat">
+      {% for c in categories %}
+      <option value="{{ c }}" {% if c == cat %}selected{% endif %}>{{ c }}</option>
+      {% endfor %}
+    </select>
+    <input class="search-input" type="text" name="q" value="{{ q }}" placeholder="Search Zentara"/>
+    <button class="search-btn" type="submit">🔍</button>
+  </form>
+  <div class="nav-actions">
+    {% if session.user_id %}
+      <a class="nav-link" href="#">
+        <small>Hello, {{ session.user_name }}</small>
+        <strong>Account ▾</strong>
+      </a>
+      {% if session.is_admin %}
+      <a class="nav-link" href="/admin"><small>Admin</small><strong>Panel</strong></a>
+      {% endif %}
+      <a class="nav-link" href="/logout"><small>Sign</small><strong>Out</strong></a>
+    {% else %}
+      <a class="nav-link" href="/login"><small>Hello, sign in</small><strong>Account ▾</strong></a>
+    {% endif %}
+    <a class="cart-btn" href="/cart">
+      <span class="cart-badge">{{ cart_count }}</span>
+      <span class="cart-icon-svg">🛒</span>
+      <strong>Cart</strong>
+    </a>
+  </div>
+</nav>
+
+<!-- Category bar -->
+<div class="catbar">
+  <a href="/?cat=All" class="{% if cat == 'All' and not q %}active{% endif %}">☰ All</a>
+  {% for c in categories %}{% if c != 'All' %}
+  <a href="/?cat={{ c }}" class="{% if cat == c %}active{% endif %}">{{ c }}</a>
+  {% endif %}{% endfor %}
+</div>
+
+<!-- Flash messages -->
+<div class="flash-wrap">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for cat_name, msg in messages %}
+    <div class="alert alert-{{ cat_name }}">{{ msg }}</div>
+    {% endfor %}
+  {% endwith %}
+</div>
+
+<!-- Hero Slider (homepage only) -->
+{% if not q and cat == 'All' %}
+<div class="hero-wrap">
+  <button class="hero-prev" onclick="heroMove(-1)">&#8249;</button>
+  <button class="hero-next" onclick="heroMove(1)">&#8250;</button>
+  <div class="hero-track" id="heroTrack">
+
+    <div class="hero-slide slide-1">
+      <div class="hero-content">
+        <span class="hero-tag">🔥 Today's Deal</span>
+        <div class="hero-title">Premium Audio.<br>Unbeatable Prices.</div>
+        <div class="hero-subtitle">Sony, Bose, Apple AirPods &mdash; up to <strong style="color:var(--yellow)">35% off</strong></div>
+        <a href="/?cat=Electronics" class="hero-cta">Shop Electronics →</a>
+      </div>
+      <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80" class="hero-image" alt="Headphones"/>
+    </div>
+
+    <div class="hero-slide slide-2">
+      <div class="hero-content">
+        <span class="hero-tag">⚡ Flash Sale</span>
+        <div class="hero-title">Level Up Your<br>Workspace.</div>
+        <div class="hero-subtitle">Keyboards, monitors &amp; accessories &mdash; save up to <strong style="color:var(--yellow)">40%</strong></div>
+        <a href="/?cat=Accessories" class="hero-cta">Shop Accessories →</a>
+      </div>
+      <img src="https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500&q=80" class="hero-image" alt="Keyboard"/>
+    </div>
+
+    <div class="hero-slide slide-3">
+      <div class="hero-content">
+        <span class="hero-tag">🌿 Wellness Week</span>
+        <div class="hero-title">Move Better.<br>Live Stronger.</div>
+        <div class="hero-subtitle">Yoga mats, dumbbells &amp; fitness gear &mdash; best prices on <strong style="color:var(--yellow)">Sports</strong></div>
+        <a href="/?cat=Sports" class="hero-cta">Shop Sports →</a>
+      </div>
+      <img src="https://images.unsplash.com/photo-1601925228008-bdc23ebac900?w=500&q=80" class="hero-image" alt="Fitness"/>
+    </div>
+
+    <div class="hero-slide slide-4">
+      <div class="hero-content">
+        <span class="hero-tag">🎮 New Arrivals</span>
+        <div class="hero-title">The Coolest<br>Gadgets of 2024.</div>
+        <div class="hero-subtitle">Drones, cameras &amp; smart devices &mdash; discover the <strong style="color:var(--yellow)">latest gadgets</strong></div>
+        <a href="/?cat=Gadgets" class="hero-cta">Shop Gadgets →</a>
+      </div>
+      <img src="https://images.unsplash.com/photo-1508614589041-895b88991e3e?w=500&q=80" class="hero-image" alt="Gadgets"/>
+    </div>
+
+  </div>
+  <div class="hero-controls">
+    <button class="hero-dot active" onclick="heroGo(0)"></button>
+    <button class="hero-dot" onclick="heroGo(1)"></button>
+    <button class="hero-dot" onclick="heroGo(2)"></button>
+    <button class="hero-dot" onclick="heroGo(3)"></button>
+  </div>
+</div>
+
+<!-- Category quick links -->
+<div class="qlinks-wrap">
+  {% set qlinks = [
+    ('Electronics','🎧'), ('Fashion','👟'), ('Home','🏠'),
+    ('Accessories','💻'), ('Books','📚'), ('Gadgets','🚁'),
+    ('Kitchen','☕'), ('Sports','🏋️'), ('Beauty','✨'), ('Toys','🎮')
+  ] %}
+  {% for label, icon in qlinks %}
+  <a href="/?cat={{ label }}" class="qlink-card">
+    <span class="qlink-icon">{{ icon }}</span>
+    <span class="qlink-label">{{ label }}</span>
+  </a>
+  {% endfor %}
+</div>
+
+<!-- Deals strip -->
+<div class="deals-section">
+  <div class="deals-header">
+    <h2>Today's Deals</h2>
+    <a href="/" class="see-all">See all →</a>
+  </div>
+  <div class="deals-grid">
+    {% for d in deals %}
+    <a href="/product/{{ d.id }}" class="deal-card">
+      <img src="{{ d.image_url }}" alt="{{ d.name }}"
+           onerror="this.src='https://placehold.co/300x120/eaeded/232f3e?text=Zentara'"/>
+      <div class="deal-card-body">
+        {% if d.original_price and d.original_price > d.price %}
+        <div class="deal-discount">Up to {{ ((1 - d.price / d.original_price) * 100)|int }}% off</div>
+        {% endif %}
+        <div class="deal-name">{{ d.name[:38] }}{% if d.name|length > 38 %}…{% endif %}</div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- Main: sidebar + products -->
+<div class="main-wrap">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-title">🔎 Filter</div>
+
+    <div class="sidebar-section">
+      <h4>Department</h4>
+      <a href="/?{% if q %}q={{ q }}&{% endif %}cat=All"
+         class="cat-link {% if cat == 'All' %}active{% endif %}">
+        All <span class="cat-count">{{ cat_counts.values()|sum }}</span>
+      </a>
+      {% for c in categories %}{% if c != 'All' %}
+      <a href="/?{% if q %}q={{ q }}&{% endif %}cat={{ c }}"
+         class="cat-link {% if cat == c %}active{% endif %}">
+        {{ c }} <span class="cat-count">{{ cat_counts.get(c, 0) }}</span>
+      </a>
+      {% endif %}{% endfor %}
+    </div>
+
+    <div class="sidebar-section">
+      <h4>Customer Review</h4>
+      {% for s in [4, 3, 2, 1] %}
+      <div class="star-filter">
+        <span style="color:var(--orange)">{% for i in range(s) %}★{% endfor %}{% for i in range(5-s) %}☆{% endfor %}</span>
+        <span style="font-size:12px;color:var(--blue)"> & Up</span>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="sidebar-section">
+      <h4>Badges</h4>
+      {% for b, cls in [('Best Seller','bs'),('Deal','deal'),('New','new'),("Amazon's Choice",'ac')] %}
+      <span class="card-badge badge-{{ cls }}" style="position:static;display:inline-block;margin:3px 2px;">{{ b }}</span>
+      {% endfor %}
+    </div>
+  </aside>
+
+  <!-- Products -->
+  <div class="products-area">
+    <div class="products-topbar">
+      <div>
+        <div class="results-title">
+          {% if q %}Results for "<span style="color:#c7511f">{{ q }}</span>"
+          {% elif cat != 'All' %}{{ cat }}
+          {% else %}All Products{% endif %}
+        </div>
+        <div class="results-count">{{ products|length }} result{% if products|length != 1 %}s{% endif %}</div>
+      </div>
+    </div>
+
+    {% if products %}
+    <div class="products-grid">
+      {% for p in products %}
+      <div class="product-card">
+        {% if p.badge %}
+        <span class="card-badge badge-{% if p.badge == 'Best Seller' %}bs{% elif p.badge == 'Deal' %}deal{% elif p.badge == 'New' %}new{% else %}ac{% endif %}">
+          {{ p.badge }}
+        </span>
+        {% endif %}
+
+        <a href="/product/{{ p.id }}" class="card-img-wrap">
+          <img src="{{ p.image_url }}" class="card-img" alt="{{ p.name }}"
+               onerror="this.src='https://placehold.co/400x195/f0f2f2/232f3e?text=Zentara'"/>
+        </a>
+
+        <div class="card-body">
+          <div class="card-cat">{{ p.category }}</div>
+          <a href="/product/{{ p.id }}" class="card-name">{{ p.name }}</a>
+
+          <div class="stars">
+            {% set r = p.rating|float %}
+            <span class="star-row">{% for i in range(5) %}{% if r >= i+1 %}★{% elif r >= i+0.5 %}½{% else %}☆{% endif %}{% endfor %}</span>
+            <span class="review-link">{{ "{:,}".format(p.review_count) }}</span>
+          </div>
+
+          <div class="price-wrap">
+            <span class="price-now"><sup>$</sup>{{ "%.0f"|format(p.price) }}<sup style="font-size:11px">.{{ "%02d"|format((p.price * 100 % 100)|int) }}</sup></span>
+            {% if p.original_price and p.original_price > p.price %}
+            <span class="price-was">${{ "%.2f"|format(p.original_price) }}</span>
+            <span class="price-save-pct">-{{ ((1 - p.price / p.original_price) * 100)|int }}%</span>
+            {% endif %}
+          </div>
+
+          <div class="free-delivery">✓ FREE Delivery</div>
+          <a href="/cart/add/{{ p.id }}" class="btn-cart">Add to Cart</a>
+          <a href="/product/{{ p.id }}" class="btn-buy">Buy Now</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">🔍</div>
+      <h3>No results found</h3>
+      <p>Try different keywords or browse a category.</p>
+      <a href="/" class="btn-cart" style="display:inline-block;width:auto;padding:10px 28px;">Browse All</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="footer-back">
+  <div class="footer-grid">
+    <div><h5>Get to Know Us</h5><ul><li><a href="#">About Zentara</a></li><li><a href="#">Careers</a></li><li><a href="#">Press</a></li></ul></div>
+    <div><h5>Sell with Us</h5><ul><li><a href="#">Sell on Zentara</a></li><li><a href="#">Affiliate Program</a></li></ul></div>
+    <div><h5>Payment</h5><ul><li><a href="#">Gift Cards</a></li><li><a href="#">Reload Balance</a></li></ul></div>
+    <div><h5>Help</h5><ul><li><a href="#">Your Account</a></li><li><a href="#">Returns</a></li><li><a href="#">Help Center</a></li></ul></div>
+  </div>
+</div>
+<div class="footer-mid"><a href="/" class="brand">Zen<span>tara</span></a></div>
+<div class="footer-bot">© 2024 Zentara.com &nbsp; <a href="#">Conditions of Use</a> &nbsp; <a href="#">Privacy</a></div>
+
+<script>
+let slide = 0;
+const total = 4;
+const track = document.getElementById('heroTrack');
+const dots  = document.querySelectorAll('.hero-dot');
+function heroGo(n) {
+  slide = (n + total) % total;
+  track.style.transform = `translateX(-${slide * 100}%)`;
+  dots.forEach((d, i) => d.classList.toggle('active', i === slide));
+}
+function heroMove(dir) { heroGo(slide + dir); }
+setInterval(() => heroMove(1), 5500);
+</script>
+</body>
+</html>

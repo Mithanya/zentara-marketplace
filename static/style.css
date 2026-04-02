@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --navy:   #131921;
+  --nav:    #232f3e;
+  --nav2:   #37475a;
+  --yellow: #febd69;
+  --orange: #f90;
+  --blue:   #007185;
+  --green:  #067d62;
+  --red:    #cc0c39;
+  --bg:     #eaeded;
+  --white:  #ffffff;
+  --border: #dddddd;
+  --text:   #0f1111;
+  --muted:  #565959;
+  --radius: 8px;
+  --shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', Arial, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; }
+a { text-decoration: none; color: inherit; }
+img { display: block; max-width: 100%; }
+
+/* ── Top bar ── */
+.topbar {
+  background: var(--navy); color: #ccc;
+  font-size: 12px; text-align: center; padding: 5px 16px;
+}
+.topbar a { color: var(--yellow); }
+
+/* ── Navbar ── */
+.navbar {
+  background: var(--nav);
+  display: flex; align-items: center;
+  padding: 8px 16px; gap: 8px;
+  position: sticky; top: 0; z-index: 1000;
+  box-shadow: 0 2px 6px rgba(0,0,0,.4);
+}
+
+.brand {
+  font-size: 22px; font-weight: 800;
+  color: var(--white); letter-spacing: -0.5px;
+  border: 2px solid transparent; padding: 5px 8px;
+  border-radius: 4px; white-space: nowrap; flex-shrink: 0;
+}
+.brand:hover { border-color: var(--white); }
+.brand span  { color: var(--orange); }
+
+.search-bar {
+  flex: 1; display: flex;
+  border-radius: 4px; overflow: hidden; min-width: 180px;
+}
+
+.search-cat {
+  background: #f3f3f3; border: none; padding: 0 10px;
+  font-size: 12px; color: #444; border-right: 1px solid #ccc;
+  cursor: pointer; flex-shrink: 0;
+}
+
+.search-input {
+  flex: 1; border: none; padding: 9px 14px;
+  font-size: 14px; outline: none;
+}
+
+.search-btn {
+  background: var(--yellow); border: none;
+  padding: 0 16px; font-size: 18px;
+  cursor: pointer;
+}
+.search-btn:hover { background: var(--orange); }
+
+/* ── Products card fix ── */
+.card-name {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--text);
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2; /* ✅ FIX */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

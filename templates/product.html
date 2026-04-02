@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>{{ product.name }} – Zentara</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="topbar">
+  🚚 Free delivery on orders over $35 &nbsp;·&nbsp; <a href="#">Join Zentara Prime</a>
+</div>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <a class="brand" href="/">Zen<span>tara</span></a>
+  <form class="search-bar" action="/" method="get" style="flex:1;max-width:600px;">
+    <input class="search-input" type="text" name="q" placeholder="Search Zentara" style="border-radius:4px 0 0 4px;"/>
+    <button class="search-btn" type="submit">🔍</button>
+  </form>
+  <div class="nav-actions">
+    {% if session.user_id %}
+      <a class="nav-link" href="/logout"><small>Sign</small><strong>Out</strong></a>
+    {% else %}
+      <a class="nav-link" href="/login"><small>Hello, sign in</small><strong>Account</strong></a>
+    {% endif %}
+    <a class="cart-btn" href="/cart">
+      <span class="cart-badge">{{ cart_count }}</span>
+      <span class="cart-icon-svg">🛒</span>
+      <strong>Cart</strong>
+    </a>
+  </div>
+</nav>
+
+<!-- Category bar -->
+<div class="catbar">
+  <a href="/">☰ All</a>
+  <a href="/?cat={{ product.category }}">{{ product.category }}</a>
+  <span style="color:#aaa;padding:8px 4px;font-size:12px;">›</span>
+  <span style="color:#ddd;padding:8px 4px;font-size:12px;">{{ product.name[:50] }}{% if product.name|length > 50 %}…{% endif %}</span>
+</div>
+
+<!-- Flash messages -->
+<div class="flash-wrap">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in messages %}
+    <div class="alert alert-{{ cat }}">{{ msg }}</div>
+    {% endfor %}
+  {% endwith %}
+</div>
+
+<!-- Product detail -->
+<div class="detail-page-wrap">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="/">Zentara</a> ›
+    <a href="/?cat={{ product.category }}">{{ product.category }}</a> ›
+    <span>{{ product.name[:60] }}{% if product.name|length > 60 %}…{% endif %}</span>
+  </div>
+
+  <div class="detail-layout">
+
+    <!-- Column 1: Images -->
+    <div class="detail-img-col">
+      <img id="mainImg"
+           src="{{ product.image_url }}"
+           class="detail-img-main"
+           alt="{{ product.name }}"
+           onerror="this.src='https://placehold.co/500x440/f0f2f2/232f3e?text=Zentara'"/>
+      <div class="detail-thumbs">
+        <img src="{{ product.image_url }}" class="detail-thumb active" onclick="swapImg(this)"
+             onerror="this.src='https://placehold.co/62x62/f0f2f2/232f3e?text=Z'"/>
+        <img src="{{ product.image_url }}" class="detail-thumb" onclick="swapImg(this)" style="opacity:.5;"
+             onerror="this.src='https://placehold.co/62x62/f0f2f2/232f3e?text=Z'"/>
+        <img src="{{ product.image_url }}" class="detail-thumb" onclick="swapImg(this)" style="opacity:.5;"
+             onerror="this.src='https://placehold.co/62x62/f0f2f2/232f3e?text=Z'"/>
+      </div>
+    </div>
+
+    <!-- Column 2: Info -->
+    <div class="detail-info-col">
+
+      {% if product.badge %}
+      <span class="detail-badge badge-{% if product.badge=='Best Seller' %}bs{% elif product.badge=='Deal' %}deal{% elif product.badge=='New' %}new{% else %}ac{% endif %}">
+        {{ product.badge }}
+      </span>
+      {% endif %}
+
+      <h1 class="detail-title">{{ product.name }}</h1>
+
+      <!-- Rating row -->
+      <div class="detail-rating-row">
+        <span class="detail-stars">
+          {% set r = product.rating|float %}
+          {% for i in range(5) %}{% if r >= i+1 %}★{% elif r >= i+0.5 %}½{% else %}☆{% endif %}{% endfor %}
+        </span>
+        <span style="color:var(--blue);font-size:14px;font-weight:600;">{{ product.rating }}</span>
+        <a href="#reviews" style="color:var(--blue);font-size:13px;">{{ "{:,}".format(product.review_count) }} ratings</a>
+        <span style="color:var(--border)">|</span>
+        <a href="#" style="color:var(--blue);font-size:13px;">{{ (product.review_count * 0.03)|int }} answered questions</a>
+      </div>
+
+      <!-- Price block -->
+      <div class="detail-price-block">
+        {% if product.original_price and product.original_price > product.price %}
+        <div class="detail-list-price">
+          List Price: <span style="text-decoration:line-through">${{ "%.2f"|format(product.original_price) }}</span>
+        </div>
+        {% endif %}
+        <div class="detail-price-now">${{ "%.2f"|format(product.price) }}</div>
+        {% if product.original_price and product.original_price > product.price %}
+        <div class="detail-save-txt">
+          You save: ${{ "%.2f"|format(product.original_price - product.price) }}
+          ({{ ((1 - product.price / product.original_price) * 100)|int }}%)
+        </div>
+        {% endif %}
+        <div style="margin-top:6px;font-size:13px;color:var(--green);font-weight:600;">✓ FREE Delivery on this item</div>
+      </div>
+
+      <!-- Description -->
+      <div class="detail-description">{{ product.description }}</div>
+
+      <!-- Feature bullets -->
+      <ul class="detail-features">
+        <li>Category: <strong>{{ product.category }}</strong></li>
+        <li>Rating: <strong>{{ product.rating }}/5</strong> from {{ "{:,}".format(product.review_count) }} customers</li>
+        <li>Free delivery available on eligible orders</li>
+        <li>30-day hassle-free returns</li>
+        <li>Secure checkout powered by Stripe</li>
+      </ul>
+
+    </div>
+
+    <!-- Column 3: Buy box -->
+    <div class="buy-box">
+      <div class="buy-box-price">${{ "%.2f"|format(product.price) }}</div>
+      <div class="delivery-info">✓ FREE delivery tomorrow</div>
+
+      <div class="buy-box-stock">
+        <div class="stock-status">✓ In Stock</div>
+      </div>
+
+      <div class="qty-row">
+        <label style="font-size:13px;font-weight:600;">Qty:</label>
+        <select class="qty-select">
+          {% for n in range(1,11) %}<option>{{ n }}</option>{% endfor %}
+        </select>
+      </div>
+
+      <a href="/cart/add/{{ product.id }}" class="btn-cart" style="margin-bottom:8px;">Add to Cart</a>
+      <a href="/cart/add/{{ product.id }}" class="btn-buy">Buy Now</a>
+
+      <div class="buy-box-meta">
+        <div>🔒 Secure transaction</div>
+        <div>📦 Ships from Zentara</div>
+        <div>🔄 30-day return policy</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Related products -->
+  {% if related %}
+  <div class="related-section">
+    <h2 class="related-title">Customers also viewed</h2>
+    <div class="products-grid">
+      {% for rp in related %}
+      <div class="product-card">
+        {% if rp.badge %}
+        <span class="card-badge badge-{% if rp.badge=='Best Seller' %}bs{% elif rp.badge=='Deal' %}deal{% elif rp.badge=='New' %}new{% else %}ac{% endif %}">{{ rp.badge }}</span>
+        {% endif %}
+        <a href="/product/{{ rp.id }}" class="card-img-wrap">
+          <img src="{{ rp.image_url }}" class="card-img" alt="{{ rp.name }}"
+               onerror="this.src='https://placehold.co/400x195/f0f2f2/232f3e?text=Zentara'"/>
+        </a>
+        <div class="card-body">
+          <div class="card-cat">{{ rp.category }}</div>
+          <a href="/product/{{ rp.id }}" class="card-name">{{ rp.name }}</a>
+          <div class="stars">
+            {% set r = rp.rating|float %}
+            <span class="star-row">{% for i in range(5) %}{% if r>=i+1 %}★{% elif r>=i+0.5 %}½{% else %}☆{% endif %}{% endfor %}</span>
+            <span class="review-link">{{ "{:,}".format(rp.review_count) }}</span>
+          </div>
+          <div class="price-wrap">
+            <span class="price-now"><sup>$</sup>{{ "%.0f"|format(rp.price) }}<sup style="font-size:11px">.{{ "%02d"|format((rp.price*100%100)|int) }}</sup></span>
+            {% if rp.original_price and rp.original_price > rp.price %}
+            <span class="price-save-pct">-{{ ((1-rp.price/rp.original_price)*100)|int }}%</span>
+            {% endif %}
+          </div>
+          <a href="/cart/add/{{ rp.id }}" class="btn-cart">Add to Cart</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+
+<!-- Footer -->
+<div class="footer-mid" style="margin-top:40px;"><a href="/" class="brand">Zen<span>tara</span></a></div>
+<div class="footer-bot">© 2024 Zentara.com, Inc.</div>
+
+<script>
+function swapImg(el) {
+  document.getElementById('mainImg').src = el.src;
+  document.querySelectorAll('.detail-thumb').forEach(t => {
+    t.classList.remove('active');
+    t.style.opacity = '.5';
+  });
+  el.classList.add('active');
+  el.style.opacity = '1';
+}
+</script>
+</body>
+</html>
