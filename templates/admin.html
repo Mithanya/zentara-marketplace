@@ -41,8 +41,8 @@
           <input type="text" name="name" class="form-control" placeholder="e.g. Smart Watch Pro" required />
         </div>
         <div class="col-md-3">
-          <label class="form-label">Price ($)</label>
-          <input type="number" name="price" class="form-control" placeholder="49.99" step="0.01" min="0" required />
+          <label class="form-label">Price (₹)</label>
+          <input type="number" name="price" class="form-control" placeholder="4999.00" step="0.01" min="0" required />
         </div>
         <div class="col-md-3">
           <label class="form-label">Category</label>
@@ -88,7 +88,7 @@
             <td style="color:var(--muted)">#{{ p.id }}</td>
             <td style="font-weight:600;">{{ p.name }}</td>
             <td><span class="product-badge">{{ p.category }}</span></td>
-            <td style="color:var(--gold);font-weight:700;">${{ "%.2f"|format(p.price) }}</td>
+            <td style="color:var(--gold);font-weight:700;">₹{{ "%.2f"|format(p.price) }}</td>
             <td>
               <a href="/admin/delete/{{ p.id }}" class="btn-del"
                  onclick="return confirm('Delete {{ p.name }}?')">
@@ -120,7 +120,7 @@
               {% set items = o.items | tojson %}
               {{ o.items[:80] }}{% if o.items|length > 80 %}…{% endif %}
             </td>
-            <td style="color:var(--gold);font-weight:700;">${{ "%.2f"|format(o.total) }}</td>
+            <td style="color:var(--gold);font-weight:700;">₹{{ "%.2f"|format(o.total) }}</td>
             <td>
               <span style="background:rgba(76,175,125,0.15);color:#6ddfaa;border:1px solid rgba(76,175,125,0.3);border-radius:6px;padding:2px 10px;font-size:.78rem;">
                 {{ o.status }}

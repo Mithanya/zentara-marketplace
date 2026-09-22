@@ -28,32 +28,33 @@
   <div class="row g-4">
     <!-- Shipping & Payment Form -->
     <div class="col-lg-7">
+      <form method="POST" action="/checkout">
       <div class="checkout-card mb-4">
         <h5 style="font-family:'Playfair Display',serif;color:var(--gold);margin-bottom:1.2rem;"><i class="bi bi-geo-alt"></i> Shipping Information</h5>
         <div class="row g-3">
           <div class="col-6">
             <label class="form-label">First Name</label>
-            <input type="text" class="form-control" placeholder="Jane" />
+            <input type="text" name="first_name" class="form-control" placeholder="Jane" required />
           </div>
           <div class="col-6">
             <label class="form-label">Last Name</label>
-            <input type="text" class="form-control" placeholder="Doe" />
+            <input type="text" name="last_name" class="form-control" placeholder="Doe" required />
           </div>
           <div class="col-12">
             <label class="form-label">Address</label>
-            <input type="text" class="form-control" placeholder="123 Main Street" />
+            <input type="text" name="address" class="form-control" placeholder="123 Main Street" required />
           </div>
           <div class="col-6">
             <label class="form-label">City</label>
-            <input type="text" class="form-control" placeholder="New York" />
+            <input type="text" name="city" class="form-control" placeholder="Mumbai" required />
           </div>
           <div class="col-3">
             <label class="form-label">State</label>
-            <input type="text" class="form-control" placeholder="NY" />
+            <input type="text" name="state" class="form-control" placeholder="Maharashtra" required />
           </div>
           <div class="col-3">
             <label class="form-label">ZIP</label>
-            <input type="text" class="form-control" placeholder="10001" />
+            <input type="text" name="postal_code" class="form-control" placeholder="400001" pattern="[0-9]{6}" required />
           </div>
         </div>
       </div>
@@ -61,37 +62,43 @@
       <div class="checkout-card">
         <h5 style="font-family:'Playfair Display',serif;color:var(--gold);margin-bottom:.5rem;"><i class="bi bi-credit-card-2-front"></i> Payment</h5>
         <p style="color:var(--muted);font-size:.8rem;margin-bottom:1.2rem;">
-          <i class="bi bi-info-circle"></i> Test mode – use card <strong style="color:var(--gold-soft)">4242 4242 4242 4242</strong>, any future date, any CVC.
+          <i class="bi bi-info-circle"></i>
+          {% if stripe_enabled %}
+          Test mode – use card <strong style="color:var(--gold-soft)">4242 4242 4242 4242</strong>, any future date, any CVC.
+          {% else %}
+          Demo mode – Stripe keys are not configured, so no real payment will be collected.
+          {% endif %}
         </p>
 
         <!-- Card UI (visual only in demo; real Stripe Elements needs JS SDK) -->
         <div class="mb-3">
           <label class="form-label">Card Number</label>
-          <input type="text" class="form-control" placeholder="4242 4242 4242 4242" maxlength="19" id="cardNum"
+          <input type="text" name="card_number" class="form-control" placeholder="4242 4242 4242 4242" maxlength="19" id="cardNum" inputmode="numeric" required
                  oninput="this.value=this.value.replace(/\D/g,'').replace(/(.{4})/g,'$1 ').trim()" />
         </div>
         <div class="row g-3">
           <div class="col-6">
             <label class="form-label">Expiry</label>
-            <input type="text" class="form-control" placeholder="MM / YY" maxlength="7"
+            <input type="text" name="expiry" class="form-control" placeholder="MM / YY" maxlength="7" inputmode="numeric" required
                    oninput="let v=this.value.replace(/\D/g,'');this.value=v.length>=3?v.slice(0,2)+' / '+v.slice(2):v" />
           </div>
           <div class="col-6">
             <label class="form-label">CVC</label>
-            <input type="text" class="form-control" placeholder="123" maxlength="4"
+            <input type="text" name="cvc" class="form-control" placeholder="123" maxlength="4" inputmode="numeric" required
                    oninput="this.value=this.value.replace(/\D/g,'')" />
           </div>
         </div>
 
-        <form method="POST" action="/checkout" class="mt-4">
+        <div class="mt-4">
           <button type="submit" class="btn-primary-gold" style="font-size:1rem;padding:.75rem;">
-            <i class="bi bi-lock-fill"></i> Pay ${{ "%.2f"|format(total) }} Now
+            <i class="bi bi-lock-fill"></i> Pay ₹{{ "%.2f"|format(total) }} Now
           </button>
-        </form>
+        </div>
         <p style="color:var(--muted);font-size:.75rem;text-align:center;margin-top:.75rem;">
           <i class="bi bi-shield-lock"></i> 256-bit SSL encryption · Powered by Stripe
         </p>
       </div>
+      </form>
     </div>
 
     <!-- Order Summary -->
@@ -105,12 +112,12 @@
             <div style="font-size:.88rem;font-weight:600;">{{ item.product.name }}</div>
             <div style="font-size:.78rem;color:var(--muted);">Qty: {{ item.qty }}</div>
           </div>
-          <div style="font-size:.9rem;font-weight:700;color:var(--gold);">${{ "%.2f"|format(item.subtotal) }}</div>
+          <div style="font-size:.9rem;font-weight:700;color:var(--gold);">₹{{ "%.2f"|format(item.subtotal) }}</div>
         </div>
         {% endfor %}
         <hr class="divider" />
         <div class="d-flex justify-content-between mb-2" style="font-size:.88rem;color:var(--muted);">
-          <span>Subtotal</span><span>${{ "%.2f"|format(total) }}</span>
+          <span>Subtotal</span><span>₹{{ "%.2f"|format(total) }}</span>
         </div>
         <div class="d-flex justify-content-between mb-2" style="font-size:.88rem;color:var(--muted);">
           <span>Shipping</span><span style="color:var(--success)">Free</span>
@@ -118,7 +125,7 @@
         <hr class="divider" />
         <div class="d-flex justify-content-between">
           <span style="font-weight:700;">Total</span>
-          <span style="font-size:1.4rem;font-weight:700;color:var(--gold)">${{ "%.2f"|format(total) }}</span>
+          <span style="font-size:1.4rem;font-weight:700;color:var(--gold)">₹{{ "%.2f"|format(total) }}</span>
         </div>
       </div>
     </div>

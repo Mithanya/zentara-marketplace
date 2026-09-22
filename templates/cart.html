@@ -50,13 +50,13 @@
                 <div style="font-weight:600;font-size:.9rem;">{{ item.product.name }}</div>
                 <span class="product-badge">{{ item.product.category }}</span>
               </td>
-              <td style="color:var(--gold)">${{ "%.2f"|format(item.product.price) }}</td>
+              <td style="color:var(--gold)">₹{{ "%.2f"|format(item.product.price) }}</td>
               <td>
                 <span style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:.25rem .6rem;font-weight:600;">
                   {{ item.qty }}
                 </span>
               </td>
-              <td style="font-weight:700;">${{ "%.2f"|format(item.subtotal) }}</td>
+              <td style="font-weight:700;">₹{{ "%.2f"|format(item.subtotal) }}</td>
               <td><a href="/cart/remove/{{ item.product.id }}" class="remove-btn"><i class="bi bi-trash3"></i></a></td>
             </tr>
             {% endfor %}
@@ -74,13 +74,13 @@
         {% for item in items %}
         <div class="d-flex justify-content-between mb-2" style="font-size:.88rem;color:var(--muted);">
           <span>{{ item.product.name }} × {{ item.qty }}</span>
-          <span>${{ "%.2f"|format(item.subtotal) }}</span>
+          <span>₹{{ "%.2f"|format(item.subtotal) }}</span>
         </div>
         {% endfor %}
         <hr class="divider" />
         <div class="d-flex justify-content-between">
           <span style="font-weight:700;">Total</span>
-          <span style="font-size:1.3rem;font-weight:700;color:var(--gold)">${{ "%.2f"|format(total) }}</span>
+          <span style="font-size:1.3rem;font-weight:700;color:var(--gold)">₹{{ "%.2f"|format(total) }}</span>
         </div>
         <a href="/checkout" class="btn-cart mt-3" style="display:block;text-align:center;">
           <i class="bi bi-credit-card"></i> Proceed to Checkout
